@@ -1,0 +1,88 @@
+---
+title "Practico3"
+author: Karen Latrille
+format: html
+editor: visual
+bibliography: 
+link-citations: true
+---
+
+## Democracia y participacion civica
+
+Esta investigación analizaremos un tema que en los últimos años se ha acrecentado en la opinión público, y ejercicio de la ciudadanía de las/os chilenos, la cual es la educación cívica y el regreso del voto obligatorio para todo aquel que sea ciudadano del país, en donde analizaremos el real alcance de esta obligatoriedad en el ejercicio popular, en donde, definiremos de forma clara los intereses y temores que involucra este cambio en las reglas del ejercicio de la soberanía del país, en donde con análisis estadístico y de literatura en torno a los diferentes aristas de este problema de investigación, centrándonos en las últimas elecciones plebiscitarias de los distintos momentos de las propuestas de las nuevas constituciones de la república, que a pesar de los resultados desfavorables para el proceso en su totalidad, si nos marca tendencias de participación cívica imperantes en Chile, y que sin educación cívica correcta no se podrá avanzar hacia un voto informado y consciente de las decisiones que el voto implica para cada uno de los ciudadanos y habitantes del país. 
+
+Tal como mackenna nos menciona, “los  ciudadanos  votan  para  lograr  que sus políticas preferidas sean promovidas por el gobierno. En consecuencia, deben tomar la decisión de participar de acuerdo con el contraste entre los costos (de inscripción, de información y de movilización) que implica votar y sus beneficios (que su candidato preferido resulte electo). Sin embargo, su candidato puede resultar electo con independencia de su voto, y en elecciones con tantos votantes la probabilidad de emitir un voto decisivo es prácticamente cero, lo que produce que los costos sean siempre mayores a los beneficios de votar. Esto lleva a lo que muchos han llamado la “paradoja de la participación” (Aldrich, 1993): a pesar de que no parece racional hacerlo, existe un númeroconsiderable de gente que vota.” ([“Composición Del Electorado En Elecciones Con Voto Obligatorio y Voluntario: Un Estudio Cuasi Experimental de La Participación Electoral En Chile” 2015](https://karenlatrille.github.io/practico1uah/practicoopc.html?classId=d51c16eb-7c4f-40d6-9b62-8b7013dfbe5d&assignmentId=aa32e546-50cb-42bd-9620-0c4d6e9e1d1d&submissionId=6cc1e06e-7913-8ca7-ba35-7c817b3aa3b0#ref-ComposicionElectoradoElecciones2015))
+
+Si bien en la entrega anterior, habiamos mencionado a las clases de votantes como objeto de estudio, nos parece mas atingente para el avance de la investigación profundizar sobre la percepcion de la ciudadania respecto a los propios poderes del estado e instituciones en general, ya que esta puede ser una directa razon de la baja participacion civica de parte de las masas en nuestro pais, ya que la democracia y la proteccion de ella muchas veces se ve manchada por quienes nos gobiernan, mencionando lo anterior es que nos centraremos en el analisis de las variables referentes a la confianza en las instituciones(gobierno, congreso, partidos politicos, poder judicial) y la persepcion que se observa sobre el poder y su ultilizacion final por las fuerzas gobernantes.
+
+## Trabajo en R
+
+```{rm(list=ls())}
+options(scipen=999)
+
+```
+
+```{#cargamos la base de datos desde internet}
+load(url("https://github.com/Kevin-carrasco/metod1-MCS/raw/main/files/data/external_data/latinobarometro2020.RData"))
+```
+
+```{proc_data <- latinobarometro2020 %>% select(p13st_e, # Confianza en el Gobierno}
+                                            p13st_d, # Confianza en el congreso
+                                            p13st_f, # Confianza en el Poder Judicial
+                                            p13st_g, # Confianza en los partidos políticos
+                                            p12st, #Donde esta el poder
+                                            reeduc_1,# nivel educacional
+                                            sexo,# sexo
+                                            edad,# edad
+                                            idenpa) # pais 
+names(proc_data)
+
+```
+
+```{sjlabelled::get_label(proc_data)}
+
+proc_data <- proc_data %>% dplyr::filter(idenpa==152)
+
+```
+
+```{#procesamiento de datos}
+proc_data$p13st_e <- recode(proc_data$p13st_e, "c(-2,-1)=NA")
+proc_data$p13st_d <- recode(proc_data$p13st_d, "c(-2,-1)=NA")
+proc_data$p13st_f <- recode(proc_data$p13st_f, "c(-2,-1)=NA")
+proc_data$p13st_g <- recode(proc_data$p13st_g, "c(-2,-1)=NA")
+proc_data$para_gob <- recode(proc_data$para_gob, "c(-4,-3,-2,-1,0)=NA")
+proc_data$p13st_e <- recode(proc_data$p13st_e, "1=3; 2=2; 3=1; 4=0")
+proc_data$p13st_d <- recode(proc_data$p13st_d, "1=3; 2=2; 3=1; 4=0")
+proc_data$p13st_f <- recode(proc_data$p13st_f, "1=3; 2=2; 3=1; 4=0")
+proc_data$p13st_g <- recode(proc_data$p13st_g, "1=3; 2=2; 3=1; 4=0")
+
+```
+
+```{#Cambio de nombre de variables}
+proc_data <- proc_data %>% rename("conf_gob"=p13st_e, # Confianza en el gobierno
+                                  "conf_cong"=p13st_d, # Confianza en el congreso
+                                  "conf_jud"=p13st_f, # Confianza en el Poder Judicial
+                                  "conf_partpol"=p13st_g,# Confianza en los partidos políticos 
+                                  "para_gob"=p12st) # Para quien se gobierna
+
+```
+
+```{# Instalacion de paquetes necesarios para la ejecucion de tareas}
+install.packages("summarytools")
+install.packages("ggplot.multistats")  
+install.packages("ggplot2")
+install.packages("sjPlot")
+install.packages("sjtable2df")
+install.packages("COR")
+install.packages("tab_corr")
+
+```
+
+```{#descriptivos}
+summarytools::dfSummary(proc_data, plain.ascii = FALSE)
+
+```
+
+```{summarytools::dfSummary(proc_data, plain.ascii = FALSE)}
+
+```
